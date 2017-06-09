@@ -18,7 +18,7 @@ type Ps struct {
 func isRight(time int, list []int)  bool {
 	if len(list) != 0 {
 		var x int
-		for x = range list {
+		for _ , x := range list {
 			if x == time {
 				break
 			}
