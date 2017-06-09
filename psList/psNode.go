@@ -4,6 +4,7 @@ import (
 	"time"
 	"strings"
 	"errors"
+	"fmt"
 )
 
 type Ps struct {
@@ -88,19 +89,21 @@ func workBit(bit string, id string) ([]int, error) {
 		min = 0
 	}
 
-	if bit[0] < '0' || bit[0] > '9' {
-		err = errors.New("Parse Error 1")
-		return slice, err
-	}
-
 	for i := 0; i < len(bit); i++ {
+
+		if bit[0] < '0' || bit[0] > '9' {
+			err = errors.New("Parse Error 1")
+			return slice, err
+		}
+
 		var temp int = 0
-		for ; i < len(bit) && bit[i] > '0' && bit[i] < '9'; i++ {
+		for ; i < len(bit) && bit[i] >= '0' && bit[i] <= '9'; i++ {
 			temp *= 10
 			temp += int(bit[i] -'0')
 		}
 
 		slice = append(slice, temp)
+		fmt.Println(slice)
 
 		if i == len(bit) {
 			break
@@ -111,14 +114,14 @@ func workBit(bit string, id string) ([]int, error) {
 
 			i++
 
-			if bit[i - 1] < '0' || bit[i - 1] > '9' {
+			if bit[i] < '0' || bit[i] > '9' {
 				err = errors.New("Parse Error 2")
 				return slice, err
 			}
 
 			temp = 0
 
-			for ;i < len(bit) && bit[i] > '0' && bit[i] < '9'; i++ {
+			for ;i < len(bit) && bit[i] >= '0' && bit[i] <= '9'; i++ {
 				temp *= 10
 				temp += int(bit[i] -'0')
 			}
@@ -131,9 +134,11 @@ func workBit(bit string, id string) ([]int, error) {
 			for x := slice[len(slice) - 1] + 1; x <= temp; x++ {
 				slice = append(slice, x)
 			}
+			fmt.Println(slice)
 		case ',':
 		default:
 			err = errors.New("Parse Error 4")
+			fmt.Println(slice)
 			return slice, err
 		}
 	}
