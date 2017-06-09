@@ -18,28 +18,25 @@ type Ps struct {
 
 func isRight(time int, list []int)  bool {
 	if len(list) != 0 {
-		var x int
 		for _ , x := range list {
 			if x == time {
-				break
+				return true
 			}
 		}
 
-		if x != time {
-			return false }
+		return false
 	}
-
 	return true
 }
 
 func (process Ps) IsTime(time time.Time) bool {
-	// Luckily enough, Go manages time in the exact way the crontab
-	// file recommends. For convenience, they're listed below
-	// Minutes (0-59)
-	// Hours (0-24)
-	// Day (1-31)
-	// Month (actually an enum, but indexed at 1)
-	// Weekday (actually an enum, but indexed at 1)
+	// Luckily enough, Go manages time in the exact way the crontab file
+	// recommends. For convenience, they're listed below
+		// Minutes (0-59)
+		// Hours (0-24)
+		// Day (1-31)
+		// Month (actually an enum, but indexed at 1)
+		// Weekday (actually an enum, but indexed at 1)
 
 	// for the workflow I designed (see outline.md) the 'percieved' minute
 	// must be one more than the actual
@@ -67,7 +64,7 @@ func workBit(bit string, id string) ([]int, error) {
 	var slice []int
 	var max int
 	var min int
-	var err error
+	var err error = nil
 
 	if bit == "*" {
 		return slice, err
@@ -92,53 +89,66 @@ func workBit(bit string, id string) ([]int, error) {
 	}
 
 	if bit[0] < '0' || bit[0] > '9' {
-		err = errors.New("Parse Error")
+		err = errors.New("Parse Error 1")
+		return slice, err
 	}
 
 	for i := 0; i < len(bit); i++ {
-		var temp int
-		for ; bit[i] > '0' && bit[i] < '9'; i++ {
+		var temp int = 0
+		for ; i < len(bit) && bit[i] > '0' && bit[i] < '9'; i++ {
 			temp *= 10
 			temp += int(bit[i] -'0')
 		}
 
 		slice = append(slice, temp)
 
+		if i == len(bit) {
+			break
+		}
+
 		switch bit[i] {
 		case '-':
-			if bit[i - 1] < '0' || bit[i - 1] > '9' {
-				err = errors.New("Parse Error")
-			}
 
 			i++
 
-			for ; bit[i] > '0' && bit[i] < '9'; i++ {
+			if bit[i - 1] < '0' || bit[i - 1] > '9' {
+				err = errors.New("Parse Error 2")
+				return slice, err
+			}
+
+			temp = 0
+
+			for ;i < len(bit) && bit[i] > '0' && bit[i] < '9'; i++ {
 				temp *= 10
 				temp += int(bit[i] -'0')
 			}
 
-			if slice[len(slice) -1] >= temp {
-				err = errors.New("Parse Error")
+			if slice[len(slice) - 1] >= temp {
+				err = errors.New("Parse Error 3")
+				return slice, err
 			}
 
-			for x := slice[len(slice) -1] + 1; x <= temp; x++ {
+			for x := slice[len(slice) - 1] + 1; x <= temp; x++ {
 				slice = append(slice, x)
 			}
 		case ',':
 		default:
-			err = errors.New("Parse Error")
+			err = errors.New("Parse Error 4")
+			return slice, err
 		}
 	}
 
 	for i := 0; i < len(slice); i++ {
 
 		if slice[i] < min || slice[i] > max {
-			err = errors.New("Parse Error")
+			err = errors.New("Parse Error 5")
+			return slice, err
 		}
 
 		for j := i + 1; j < len(slice); j++ {
 			if slice[i] == slice[j] {
-				err = errors.New("Parse Error")
+				err = errors.New("Parse Error 6")
+				return slice, err
 			}
 		}
 	}
@@ -148,23 +158,39 @@ func workBit(bit string, id string) ([]int, error) {
 
 func ParseLine(line string) (* Ps, error) {
 	ret := new(Ps)
-	var err error
+	var err error = nil
 	chunks := strings.Split(line, " ")
 
 	if len(chunks) < 6 {
-		err = errors.New("Parse Error")
+		err = errors.New("Parse Error 7")
 	}
 
 	ret.min, err = workBit(chunks[0], "min")
-	ret.hr, err = workBit(chunks[1], "hr")
-	ret.day, err = workBit(chunks[2], "day")
-	ret.mon, err = workBit(chunks[3], "mon")
-	ret.wkday, err = workBit(chunks[4], "wkday")
-	ret.Comm = strings.Join(chunks[5:], " ")
-
 	if err != nil {
 		return nil, err
 	}
+
+	ret.hr, err = workBit(chunks[1], "hr")
+	if err != nil {
+		return nil, err
+	}
+
+	ret.day, err = workBit(chunks[2], "day")
+	if err != nil {
+		return nil, err
+	}
+
+	ret.mon, err = workBit(chunks[3], "mon")
+	if err != nil {
+		return nil, err
+	}
+
+	ret.wkday, err = workBit(chunks[4], "wkday")
+	if err != nil {
+		return nil, err
+	}
+	ret.Comm = strings.Join(chunks[5:], " ")
+
 
 	return ret, err
 }

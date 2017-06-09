@@ -4,7 +4,7 @@ type PsList struct {
 	Head *Ps
 }
 
-func (top PsList) Remove(node *Ps) *Ps {
+func (top *PsList) Remove(node *Ps) *Ps {
 	var cur *Ps
 	for cur = top.Head; cur.Next == node; cur = cur.Next {
 		if cur.Next == nil {
@@ -18,12 +18,9 @@ func (top PsList) Remove(node *Ps) *Ps {
 	return node
 }
 
-func (top PsList) Add(node *Ps) *Ps {
+func (top *PsList) Add(node *Ps) {
 	if (node != nil) {
 		node.Next = top.Head
 		top.Head = node
-		return top.Head
-	} else {
-		return nil
 	}
 }
