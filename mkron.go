@@ -1,11 +1,14 @@
 package main
 
 import (
-	"github.com/sowhich/mkron/psList"
+	"github.com/SoWhich/mkron/psList"
 	"os/exec"
 	"os"
 	"time"
 	"bufio"
+	"errors"
+	"log"
+	"fmt"
 )
 
 func runNEmpty(q psList.PsQueue) {
@@ -17,10 +20,15 @@ func runNEmpty(q psList.PsQueue) {
 }
 
 func main() {
-	// todo, allow user to specifiy special config file
+	// todo, allow user to specifiy special cron file
 	fname := "/etc/crontab"
-	tab, _ := os.Open(fname)
+	tab, err := os.Open(fname)
 
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// read the crontab file and load the lines into a slice
 	scanner := bufio.NewScanner(tab)
 	var lines []string
 	for scanner.Scan() {
@@ -31,11 +39,17 @@ func main() {
 	var queue psList.PsQueue
 
 	for x := range lines {
-		list.Add(psList.ParseLine(lines[x]))
+		pcess, err := psList.ParseLine(lines[x])
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
+
+		list.Add(pcess)
 	}
 
 	if list.Head == nil {
-		// Exit failure?
+		log.Fatal(errors.New("empty or imparsible crontab"))
 	}
 
 	for /*no SIGHUP/TERM/KILL*/ {
@@ -60,7 +74,17 @@ func main() {
 			}
 
 			for x := range lines {
-				list.Add(psList.ParseLine(lines[x]))
+				pcess, err := psList.ParseLine(lines[x])
+				if err != nil {
+					fmt.Println(err)
+					continue
+				}
+
+				list.Add(pcess)
+			}
+
+			if list.Head == nil {
+				log.Fatal(errors.New("empty or imparsible crontab"))
 			}
 		}
 

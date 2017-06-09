@@ -3,6 +3,7 @@ package psList
 import (
 	"time"
 	"strings"
+	"errors"
 )
 
 type Ps struct {
@@ -62,13 +63,14 @@ func (process Ps) Add(node *Ps) *Ps {
 	return node
 }
 
-func workBit(bit string, id string) []int {
+func workBit(bit string, id string) ([]int, error) {
 	var slice []int
 	var max int
 	var min int
+	var err error
 
 	if bit == "*" {
-		return slice
+		return slice, err
 	}
 
 	switch id {
@@ -90,7 +92,7 @@ func workBit(bit string, id string) []int {
 	}
 
 	if bit[0] < '0' || bit[0] > '9' {
-		//throw error
+		err = errors.New("Parse Error")
 	}
 
 	for i := 0; i < len(bit); i++ {
@@ -105,7 +107,7 @@ func workBit(bit string, id string) []int {
 		switch bit[i] {
 		case '-':
 			if bit[i - 1] < '0' || bit[i - 1] > '9' {
-				//throw error
+				err = errors.New("Parse Error")
 			}
 
 			i++
@@ -116,7 +118,7 @@ func workBit(bit string, id string) []int {
 			}
 
 			if slice[len(slice) -1] >= temp {
-				//throw error
+				err = errors.New("Parse Error")
 			}
 
 			for x := slice[len(slice) -1] + 1; x <= temp; x++ {
@@ -124,40 +126,45 @@ func workBit(bit string, id string) []int {
 			}
 		case ',':
 		default:
-			//throw error
+			err = errors.New("Parse Error")
 		}
 	}
 
 	for i := 0; i < len(slice); i++ {
 
 		if slice[i] < min || slice[i] > max {
-			//throw error
+			err = errors.New("Parse Error")
 		}
 
 		for j := i + 1; j < len(slice); j++ {
 			if slice[i] == slice[j] {
-				//throw error
+				err = errors.New("Parse Error")
 			}
 		}
 	}
 
-	return slice
+	return slice, err
 }
 
-func ParseLine(line string) * Ps {
+func ParseLine(line string) (* Ps, error) {
 	ret := new(Ps)
+	var err error
 	chunks := strings.Split(line, " ")
 
 	if len(chunks) < 6 {
-		// throw error
+		err = errors.New("Parse Error")
 	}
 
-	ret.min = workBit(chunks[0], "min")
-	ret.hr = workBit(chunks[1], "hr")
-	ret.day = workBit(chunks[2], "day")
-	ret.mon = workBit(chunks[3], "mon")
-	ret.wkday = workBit(chunks[4], "wkday")
+	ret.min, err = workBit(chunks[0], "min")
+	ret.hr, err = workBit(chunks[1], "hr")
+	ret.day, err = workBit(chunks[2], "day")
+	ret.mon, err = workBit(chunks[3], "mon")
+	ret.wkday, err = workBit(chunks[4], "wkday")
 	ret.Comm = strings.Join(chunks[5:], " ")
 
-	return ret
+	if err != nil {
+		return nil, err
+	}
+
+	return ret, err
 }
