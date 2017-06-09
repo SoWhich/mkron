@@ -9,6 +9,11 @@ POSIX compatible.
 
 For details on how it runs and how to use it, check OUTLINE.md
 
+**WARNING!**
+
+This program was made for my own amusement and out of a desire to learn a new
+language (Go). Things may be (read: are) incomplete and unpolished.
+
 ## Dependencies ##
 
 - Go (duh)
@@ -18,5 +23,9 @@ That should be it!
 
 ## Build Instructions ##
 
+	go get github.com/SoWhich/mkron
+	go install github.com/SoWhich/mkron
+
 ## Contributors ##
 
+(None currently, be the first!)
