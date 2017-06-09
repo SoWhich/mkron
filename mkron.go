@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/SoWhich/mkron/psList"
 	"os/exec"
 	"os"
 	"time"
@@ -9,15 +8,9 @@ import (
 	"errors"
 	"log"
 	"fmt"
+	"github.com/SoWhich/mkron/psList"
 )
 
-func runNEmpty(q psList.PsQueue) {
-	var cur *psList.Ps
-	for !q.IsEmpty() {
-		cur = q.Dequeue()
-		exec.Command("/bin/sh", cur.Comm)
-	}
-}
 
 func main() {
 	// todo, allow user to specifiy special cron file
@@ -35,37 +28,57 @@ func main() {
 		lines = append(lines, scanner.Text())
 	}
 
-	var list psList.PsList
-	var queue psList.PsQueue
+	list := new(psList.PsList)
+	var queue []*psList.Ps
 
 	for x := range lines {
 		pcess, err := psList.ParseLine(lines[x])
 		if err != nil {
-			fmt.Println(err)
+			fmt.Printf("%s on line %d\n", err, x + 1 )
 			continue
 		}
-
 		list.Add(pcess)
 	}
 
 	if list.Head == nil {
-		log.Fatal(errors.New("empty or imparsible crontab"))
+		log.Fatal(errors.New("empty/imparsible crontab"))
 	}
 
 	for /*no SIGHUP/TERM/KILL*/ {
-		runNEmpty(queue)
-		time := time.Now()
-		for /* freaking make an iterator method MATT*/ i := list.Head; i != nil; i = i.Next {
-			if i.IsTime(time) {
-				queue.Enqueue(i)
+
+		if len(queue) > 0 {
+			var cur *psList.Ps
+
+			for len(queue) > 1 {
+				cur = queue[0]
+				fmt.Println(cur.Comm)
+				q := exec.Command("/bin/sh", "-c", "\"", cur.Comm, "\"")
+				fmt.Println(q)
+				q.Run()
+				queue = queue[1:]
+			}
+
+			cur = queue[0]
+			fmt.Println(cur.Comm)
+			q := exec.Command("/bin/sh", "-c", "\"", cur.Comm, "\"")
+			fmt.Println(q)
+			q.Run()
+			queue = []*psList.Ps{}
+		}
+
+		now := time.Now().Local()
+		fmt.Println(now)
+
+		for  i := list.Head; i != nil; i = i.Next {
+			if i.IsTime(now) {
+				queue = append(queue, i)
 			}
 		}
 
 		if /*timestampcheck*/ false {
 
 			list.Head = nil
-			queue.Front = nil
-			queue.Back = nil
+			queue = []*psList.Ps{}
 
 			scanner := bufio.NewScanner(tab)
 
@@ -76,7 +89,7 @@ func main() {
 			for x := range lines {
 				pcess, err := psList.ParseLine(lines[x])
 				if err != nil {
-					fmt.Println(err)
+					fmt.Printf("%s on line %d\n", err, x+1)
 					continue
 				}
 
@@ -84,12 +97,16 @@ func main() {
 			}
 
 			if list.Head == nil {
-				log.Fatal(errors.New("empty or imparsible crontab"))
+				log.Fatal(errors.New("empty/imparsible " +
+					"crontab"))
 			}
 		}
 
 		if /*Signal*/ false {
 			/*response (in switch case) */
 		}
+
+		// sleep till next minute
+		time.Sleep(time.Until(now.Truncate(time.Minute).Add(time.Minute)))
 	}
 }
