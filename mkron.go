@@ -27,6 +27,12 @@ func main() {
 		lines = append(lines, scanner.Text())
 	}
 
+	err = tab.Close()
+
+	if err != nil {
+		log.Println(err)
+	}
+
 	list := new(psList.PsList)
 	var queue []*psList.Ps
 
@@ -67,33 +73,6 @@ func main() {
 		for  i := list.Head; i != nil; i = i.Next {
 			if i.IsTime(now) {
 				queue = append(queue, i)
-			}
-		}
-
-		if /*timestampcheck*/ false {
-
-			list.Head = nil
-			queue = []*psList.Ps{}
-
-			scanner := bufio.NewScanner(tab)
-
-			for scanner.Scan() {
-				lines = append(lines, scanner.Text())
-			}
-
-			for x := range lines {
-				pcess, err := psList.ParseLine(lines[x])
-				if err != nil {
-					log.Printf("%s on line %d\n", err, x+1)
-					continue
-				}
-
-				list.Add(pcess)
-			}
-
-			if list.Head == nil {
-				log.Fatal(errors.New("empty/imparsible " +
-					"crontab"))
 			}
 		}
 
