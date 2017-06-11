@@ -7,7 +7,6 @@ import (
 	"bufio"
 	"errors"
 	"log"
-//	"fmt"
 	"github.com/SoWhich/mkron/psList"
 )
 
@@ -32,12 +31,14 @@ func main() {
 	var queue []*psList.Ps
 
 	for x := range lines {
-		pcess, err := psList.ParseLine(lines[x])
-		if err != nil {
-			log.Printf("%s on line %d\n", err, x + 1 )
-			continue
+		if lines[x][0] != '#' {
+			pcess, err := psList.ParseLine(lines[x])
+			if err != nil {
+				log.Printf("%s on line %d\n", err, x + 1 )
+				continue
+			}
+			list.Add(pcess)
 		}
-		list.Add(pcess)
 	}
 
 	if list.Head == nil {
