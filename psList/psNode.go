@@ -4,7 +4,6 @@ import (
 	"time"
 	"strings"
 	"errors"
-	"fmt"
 )
 
 type Ps struct {
@@ -103,7 +102,6 @@ func workBit(bit string, id string) ([]int, error) {
 		}
 
 		slice = append(slice, temp)
-		fmt.Println(slice)
 
 		if i == len(bit) {
 			break
@@ -134,11 +132,9 @@ func workBit(bit string, id string) ([]int, error) {
 			for x := slice[len(slice) - 1] + 1; x <= temp; x++ {
 				slice = append(slice, x)
 			}
-			fmt.Println(slice)
 		case ',':
 		default:
 			err = errors.New("Parse Error 4")
-			fmt.Println(slice)
 			return slice, err
 		}
 	}

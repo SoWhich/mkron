@@ -7,7 +7,7 @@ import (
 	"bufio"
 	"errors"
 	"log"
-	"fmt"
+//	"fmt"
 	"github.com/SoWhich/mkron/psList"
 )
 
@@ -34,7 +34,7 @@ func main() {
 	for x := range lines {
 		pcess, err := psList.ParseLine(lines[x])
 		if err != nil {
-			fmt.Printf("%s on line %d\n", err, x + 1 )
+			log.Printf("%s on line %d\n", err, x + 1 )
 			continue
 		}
 		list.Add(pcess)
@@ -51,24 +51,18 @@ func main() {
 
 			for len(queue) > 1 {
 				cur = queue[0]
-				fmt.Println(cur.Comm)
-				q := exec.Command("/bin/sh", "-c", "\"", cur.Comm, "\"")
-				fmt.Println(q)
-				q.Run()
+				q := exec.Command("sh", "-c", cur.Comm)
+				go q.Start()
 				queue = queue[1:]
 			}
 
 			cur = queue[0]
-			fmt.Println(cur.Comm)
-			q := exec.Command("/bin/sh", "-c", "\"", cur.Comm, "\"")
-			fmt.Println(q)
-			q.Run()
+			q := exec.Command("sh", "-c", cur.Comm,)
+			go q.Start()
 			queue = []*psList.Ps{}
 		}
 
 		now := time.Now().Local()
-		fmt.Println(now)
-
 		for  i := list.Head; i != nil; i = i.Next {
 			if i.IsTime(now) {
 				queue = append(queue, i)
@@ -89,7 +83,7 @@ func main() {
 			for x := range lines {
 				pcess, err := psList.ParseLine(lines[x])
 				if err != nil {
-					fmt.Printf("%s on line %d\n", err, x+1)
+					log.Printf("%s on line %d\n", err, x+1)
 					continue
 				}
 
