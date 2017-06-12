@@ -10,7 +10,6 @@ import (
 	"github.com/SoWhich/mkron/psList"
 )
 
-
 func main() {
 	// todo, allow user to specifiy special cron file
 	fname := "/etc/crontab"
@@ -33,46 +32,45 @@ func main() {
 		log.Println(err)
 	}
 
-	list := new(psList.PsList)
-	var queue []*psList.Ps
-
-	for x := range lines {
-		if lines[x][0] != '#' {
-			pcess, err := psList.ParseLine(lines[x])
+	allPs := new(psList.PsList)
+	for lineNr := range lines {
+		if lines[lineNr][0] != '#' {
+			pcess, err := psList.ParseLine(lines[lineNr])
 			if err != nil {
-				log.Printf("%s on line %d\n", err, x + 1 )
+				log.Printf("%s on line %d\n", err, lineNr + 1 )
 				continue
 			}
-			list.Add(pcess)
+			allPs.Add(pcess)
 		}
 	}
 
-	if list.Head == nil {
+	if allPs.Head == nil {
 		log.Fatal(errors.New("empty/imparsible crontab"))
 	}
 
+	var queuedPs []*psList.Ps
 	for /*no SIGHUP/TERM/KILL*/ {
 
-		if len(queue) > 0 {
+		if len(queuedPs) > 0 {
 			var cur *psList.Ps
 
-			for len(queue) > 1 {
-				cur = queue[0]
-				q := exec.Command("sh", "-c", cur.Comm)
-				go q.Start()
-				queue = queue[1:]
+			for len(queuedPs) > 1 {
+				cur = queuedPs[0]
+				ps := exec.Command("sh", "-c", cur.Comm)
+				go ps.Start()
+				queuedPs = queuedPs[1:]
 			}
 
-			cur = queue[0]
-			q := exec.Command("sh", "-c", cur.Comm,)
-			go q.Start()
-			queue = []*psList.Ps{}
+			cur = queuedPs[0]
+			ps := exec.Command("sh", "-c", cur.Comm,)
+			go ps.Start()
+			queuedPs = []*psList.Ps{}
 		}
 
 		now := time.Now().Local()
-		for  i := list.Head; i != nil; i = i.Next {
-			if i.IsTime(now) {
-				queue = append(queue, i)
+		for ps := allPs.Head; ps != nil; ps = ps.Next {
+			if ps.IsTime(now) {
+				queuedPs = append(queuedPs, ps)
 			}
 		}
 
