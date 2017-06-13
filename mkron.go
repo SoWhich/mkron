@@ -1,13 +1,13 @@
 package main
 
 import (
-	"os/exec"
-	"os"
-	"time"
 	"bufio"
 	"errors"
-	"log"
 	"github.com/SoWhich/mkron/psList"
+	"log"
+	"os"
+	"os/exec"
+	"time"
 )
 
 func main() {
@@ -37,7 +37,7 @@ func main() {
 		if lines[lineNr][0] != '#' {
 			pcess, err := psList.ParseLine(lines[lineNr])
 			if err != nil {
-				log.Printf("%s on line %d\n", err, lineNr + 1 )
+				log.Printf("%s on line %d\n", err, lineNr+1)
 				continue
 			}
 			allPs.Add(pcess)
@@ -62,7 +62,7 @@ func main() {
 			}
 
 			cur = queuedPs[0]
-			ps := exec.Command("sh", "-c", cur.Comm,)
+			ps := exec.Command("sh", "-c", cur.Comm)
 			go ps.Start()
 			queuedPs = []*psList.Ps{}
 		}

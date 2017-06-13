@@ -19,7 +19,7 @@ func (top *PsList) Remove(node *Ps) *Ps {
 }
 
 func (top *PsList) Add(node *Ps) {
-	if (node != nil) {
+	if node != nil {
 		node.Next = top.Head
 		top.Head = node
 	}

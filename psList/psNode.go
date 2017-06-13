@@ -1,24 +1,24 @@
 package psList
 
 import (
-	"time"
-	"strings"
 	"errors"
+	"strings"
+	"time"
 )
 
 type Ps struct {
-	Comm string
-	min []int
-	hr []int
-	day []int
-	mon []int
+	Comm  string
+	min   []int
+	hr    []int
+	day   []int
+	mon   []int
 	wkday []int
-	Next *Ps
+	Next  *Ps
 }
 
-func isRight(time int, list []int)  bool {
+func isRight(time int, list []int) bool {
 	if len(list) != 0 {
-		for _ , x := range list {
+		for _, x := range list {
 			if x == time {
 				return true
 			}
@@ -32,19 +32,19 @@ func isRight(time int, list []int)  bool {
 func (process Ps) IsTime(time time.Time) bool {
 	// Luckily enough, Go manages time in the exact way the crontab file
 	// recommends. For convenience, they're listed below
-		// Minutes (0-59)
-		// Hours (0-24)
-		// Day (1-31)
-		// Month (actually an enum, but indexed at 1)
-		// Weekday (actually an enum, but indexed at 1)
+	// Minutes (0-59)
+	// Hours (0-24)
+	// Day (1-31)
+	// Month (actually an enum, but indexed at 1)
+	// Weekday (actually an enum, but indexed at 1)
 
 	// for the workflow I designed (see outline.md) the 'percieved' minute
 	// must be one more than the actual
-	if isRight(time.Minute() + 1, process.min) &&
-	   isRight(time.Hour(), process.hr) &&
-	   isRight(time.Day(), process.day) &&
-	   isRight(int(time.Month()), process.mon) &&
-	   isRight(int(time.Weekday()), process.wkday) {
+	if isRight(time.Minute()+1, process.min) &&
+		isRight(time.Hour(), process.hr) &&
+		isRight(time.Day(), process.day) &&
+		isRight(int(time.Month()), process.mon) &&
+		isRight(int(time.Weekday()), process.wkday) {
 		return true
 	} else {
 		return false
@@ -98,7 +98,7 @@ func workBit(bit string, id string) ([]int, error) {
 		var temp int = 0
 		for ; i < len(bit) && bit[i] >= '0' && bit[i] <= '9'; i++ {
 			temp *= 10
-			temp += int(bit[i] -'0')
+			temp += int(bit[i] - '0')
 		}
 
 		slice = append(slice, temp)
@@ -119,17 +119,17 @@ func workBit(bit string, id string) ([]int, error) {
 
 			temp = 0
 
-			for ;i < len(bit) && bit[i] >= '0' && bit[i] <= '9'; i++ {
+			for ; i < len(bit) && bit[i] >= '0' && bit[i] <= '9'; i++ {
 				temp *= 10
-				temp += int(bit[i] -'0')
+				temp += int(bit[i] - '0')
 			}
 
-			if slice[len(slice) - 1] >= temp {
+			if slice[len(slice)-1] >= temp {
 				err = errors.New("Parse Error 3")
 				return slice, err
 			}
 
-			for x := slice[len(slice) - 1] + 1; x <= temp; x++ {
+			for x := slice[len(slice)-1] + 1; x <= temp; x++ {
 				slice = append(slice, x)
 			}
 		case ',':
@@ -157,7 +157,7 @@ func workBit(bit string, id string) ([]int, error) {
 	return slice, err
 }
 
-func ParseLine(line string) (* Ps, error) {
+func ParseLine(line string) (*Ps, error) {
 	ret := new(Ps)
 	var err error = nil
 	chunks := strings.Split(line, " ")
@@ -191,7 +191,6 @@ func ParseLine(line string) (* Ps, error) {
 		return nil, err
 	}
 	ret.Comm = strings.Join(chunks[5:], " ")
-
 
 	return ret, err
 }
