@@ -33,6 +33,7 @@ func main() {
 	}
 
 	allPs := new(psList.PsList)
+
 	for lineNr := range lines {
 		if lines[lineNr][0] != '#' {
 			pcess, err := psList.ParseLine(lines[lineNr])
@@ -48,29 +49,20 @@ func main() {
 		log.Fatal(errors.New("empty/imparsible crontab"))
 	}
 
-	var queuedPs []*psList.Ps
+	psStack := new(psList.PsList)
+
 	for /*no SIGHUP/TERM/KILL*/ {
 
-		if len(queuedPs) > 0 {
-			var cur *psList.Ps
-
-			for len(queuedPs) > 1 {
-				cur = queuedPs[0]
-				ps := exec.Command("sh", "-c", cur.Comm)
-				go ps.Start()
-				queuedPs = queuedPs[1:]
-			}
-
-			cur = queuedPs[0]
+		for !psStack.IsEmpty() {
+			cur := psStack.Remove(psStack.Head)
 			ps := exec.Command("sh", "-c", cur.Comm)
 			go ps.Start()
-			queuedPs = []*psList.Ps{}
 		}
 
 		now := time.Now().Local()
 		for ps := allPs.Head; ps != nil; ps = ps.Next {
 			if ps.IsTime(now) {
-				queuedPs = append(queuedPs, ps)
+				psStack.Add(ps)
 			}
 		}
 
