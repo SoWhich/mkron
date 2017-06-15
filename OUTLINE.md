@@ -16,19 +16,15 @@ POSIX compatible.
 2.	The lines in the file are parsed, and each command is put into a list
 	type data structure
 
-3.	Every minute (the least gradation in the file) it goes through a queue
-	of commands that are slated to be started this minute and then executes
-	them, and moves them back to the normal list
+3.	The list is read, and the events that need executing are put into a
+	stack (which really technically is a list, but it's used as a stack)
 
-4.	Then, it goes through the list and adds to the queue the events that
-	need to be started the _next_ minute
+4.	then the commands are popped off the stack and executed as goroutines
 
 5.	After this, it checks if there's been a sigevent and responds
-	accordingly
+	accordingly (STILL A TODO)
 
-6.	Then checks if there's been a modification of the crontab file
-
-7.	And sleeps till the next minute
+6.	And sleeps till the next minute
 
 ### Human Level ###
 

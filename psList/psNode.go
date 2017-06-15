@@ -38,9 +38,7 @@ func (process Ps) IsTime(time time.Time) bool {
 	// Month (actually an enum, but indexed at 1)
 	// Weekday (actually an enum, but indexed at 1)
 
-	// for the workflow I designed (see outline.md) the 'percieved' minute
-	// must be one more than the actual
-	if isRight(time.Minute()+1, process.min) &&
+	if isRight(time.Minute(), process.min) &&
 		isRight(time.Hour(), process.hr) &&
 		isRight(time.Day(), process.day) &&
 		isRight(int(time.Month()), process.mon) &&
