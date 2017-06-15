@@ -54,9 +54,12 @@ func main() {
 	for /*no SIGHUP/TERM/KILL*/ {
 
 		now := time.Now().Local()
-		for ps := allPs.Head; ps != nil; ps = ps.Next {
+		for ps := allPs.Head; ps != nil; {
 			if ps.IsTime(now) {
-				psStack.Add(ps)
+				psStack.Add(allPs.Remove(allPs.Head))
+				ps = allPs.Head
+			} else {
+				ps = ps.Next
 			}
 		}
 
@@ -64,6 +67,7 @@ func main() {
 			cur := psStack.Remove(psStack.Head)
 			ps := exec.Command("sh", "-c", cur.Comm)
 			go ps.Start()
+			allPs.Add(cur)
 		}
 
 		if /*Signal*/ false {
