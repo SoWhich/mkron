@@ -5,14 +5,14 @@ type PsList struct {
 }
 
 func (top *PsList) Remove(node *Ps) *Ps {
-	var cur *Ps
 
-	if node != nil && node == top.Head {
-		cur = top.Head
+	if node == nil {
+
+	} else if node == top.Head {
 		top.Head = top.Head.Next
-		return cur
 
 	} else {
+		var cur *Ps
 		for cur = top.Head; cur.Next == node; cur = cur.Next {
 			if cur.Next == nil {
 				return nil
@@ -21,9 +21,9 @@ func (top *PsList) Remove(node *Ps) *Ps {
 
 		cur.Next = node.Next
 		node.Next = nil
-
-		return node
 	}
+
+	return node
 }
 
 func (top *PsList) Add(node *Ps) {
