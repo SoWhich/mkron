@@ -56,8 +56,9 @@ func main() {
 		now := time.Now().Local()
 		for ps := allPs.Head; ps != nil; {
 			if ps.IsTime(now) {
-				psStack.Add(allPs.Remove(allPs.Head))
-				ps = allPs.Head
+				cur := ps.Next
+				psStack.Add(allPs.Remove(ps))
+				ps = cur
 			} else {
 				ps = ps.Next
 			}
