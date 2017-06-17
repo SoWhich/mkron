@@ -28,4 +28,5 @@ That should be it!
 
 ## Contributors ##
 
-(None currently, be the first!)
+* [github.com/lafrenierejm](Joe Lafreniere) for helping with clarity and the
+logic of the code (among other things)
