@@ -27,5 +27,5 @@ That should be it!
 
 ## Contributors ##
 
-* [Joe Lafreniere](https://github.com/lafrenierejm) for helping with clarity
+* [Joe Lafreniere](http://github.com/lafrenierejm) for helping with clarity
 and the logic of the code (among other things)
