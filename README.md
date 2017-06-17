@@ -1,6 +1,5 @@
 MKron
 =====
--------------------------------------------------------------------------------
 
 >A cron daemon written by **M**atthew **K**unjummen
 
@@ -28,5 +27,5 @@ That should be it!
 
 ## Contributors ##
 
-* [github.com/lafrenierejm](Joe Lafreniere) for helping with clarity and the
+* [Joe Lafreniere](github.com/lafrenierejm) for helping with clarity and the
 logic of the code (among other things)
