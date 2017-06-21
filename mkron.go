@@ -22,6 +22,7 @@ package main
 import (
 	"bufio"
 	"errors"
+	"flag"
 	"github.com/SoWhich/mkron/psList"
 	"log"
 	"os"
@@ -30,9 +31,9 @@ import (
 )
 
 func main() {
-	// todo, allow user to specifiy special cron file
-	fname := "/etc/crontab"
-	tab, err := os.Open(fname)
+	fname := flag.String("f", "/etc/crontab", "the crontab file location")
+	flag.Parse()
+	tab, err := os.Open(*fname)
 
 	if err != nil {
 		log.Fatal(err)
