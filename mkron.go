@@ -23,6 +23,7 @@ import (
 	"bufio"
 	"errors"
 	"flag"
+	"fmt"
 	"github.com/SoWhich/mkron/psList"
 	"log"
 	"os"
@@ -31,8 +32,16 @@ import (
 )
 
 func main() {
-	fname := flag.String("f", "/etc/crontab", "the crontab file location")
+	ver := flag.Bool("v", false, "get version number/about information")
+	fname := flag.String("f", "/etc/crontab", "name crontab file location")
 	flag.Parse()
+
+	if *ver {
+		fmt.Println("MKron version 2.1 Copyright (C) 2017 \n" +
+			"Matthew Kunjummen and contributors\n")
+		return
+	}
+
 	tab, err := os.Open(*fname)
 
 	if err != nil {
@@ -87,7 +96,10 @@ func main() {
 		for !psStack.IsEmpty() {
 			cur := psStack.Remove(psStack.Head)
 			ps := exec.Command("sh", "-c", cur.Comm)
-			go ps.Start()
+			err = ps.Start()
+			if err != nil {
+				log.Println(err)
+			}
 			allPs.Add(cur)
 		}
 
