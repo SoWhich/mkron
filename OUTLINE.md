@@ -1,5 +1,4 @@
-MKron
-=====
+# MKron
 -------------------------------------------------------------------------------
 
 >A cron daemon written by **M**atthew **K**unjummen
@@ -7,9 +6,9 @@ MKron
 MKron is written in go and designed to be simple to write and (roughly)
 POSIX compatible.
 
-## Overview ##
+## Overview
 
-### Software Level ###
+### Software Level
 
 1.	MKron reads the crontab file from /etc/crontab
 
@@ -26,9 +25,9 @@ POSIX compatible.
 
 6.	And sleeps till the next minute
 
-### Human Level ###
+### Human Level
 
-#### Crontab File ####
+#### Crontab File
 
 	* * * * * command (unquoted) to be run
 	| | | | |
@@ -40,11 +39,11 @@ POSIX compatible.
 
 MKron accepts lists and durations of the values.
 
-* `0 0 1 1,5 * comm`
+- `0 0 1 1,5 * comm`
 runs 'comm' at midnight of the first of every month in January and May
 
-* `0 0 * * 1-5 comm`
+- `0 0 * * 1-5 comm`
 runs 'comm' at midnight of every weekday
 
-* `* * 1 1 * comm`
+- `* * 1 1 * comm`
 runs 'comm' at every minute of January First
