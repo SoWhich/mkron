@@ -74,7 +74,7 @@ func main() {
 		}
 	}
 
-	if allPs.Head == nil {
+	if allPs.IsEmpty() {
 		log.Fatal(errors.New("empty/imparsible crontab"))
 	}
 
@@ -82,7 +82,7 @@ func main() {
 
 	for /*no SIGHUP/TERM/KILL*/ {
 
-		now := time.Now().Local()
+		now := time.Now().Local().Truncate(time.Minute)
 		for ps := allPs.Head; ps != nil; {
 			if ps.IsTime(now) {
 				cur := ps.Next
@@ -108,6 +108,6 @@ func main() {
 		}
 
 		// sleep till next minute
-		time.Sleep(time.Until(now.Truncate(time.Minute).Add(time.Minute)))
+		time.Sleep(time.Until(now.Add(time.Minute)))
 	}
 }

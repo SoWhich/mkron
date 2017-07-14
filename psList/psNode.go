@@ -67,21 +67,18 @@ func isRight(time int, list []int) bool {
 func (process Ps) IsTime(time time.Time) bool {
 	// Luckily enough, Go manages time in the exact way the crontab file
 	// recommends. For convenience, they're listed below
+
 	// Minutes (0-59)
 	// Hours (0-24)
 	// Day (1-31)
 	// Month (actually an enum, but indexed at 1)
 	// Weekday (actually an enum, but indexed at 1)
 
-	if isRight(time.Minute(), process.min) &&
+	return (isRight(time.Minute(), process.min) &&
 		isRight(time.Hour(), process.hr) &&
 		isRight(time.Day(), process.day) &&
 		isRight(int(time.Month()), process.mon) &&
-		isRight(int(time.Weekday()), process.wkday) {
-		return true
-	} else {
-		return false
-	}
+		isRight(int(time.Weekday()), process.wkday))
 }
 
 func (process Ps) Add(node *Ps) *Ps {
@@ -123,7 +120,7 @@ func workBit(bit string, id string) ([]int, error) {
 
 	for i := 0; i < len(bit); i++ {
 
-		if bit[0] < '0' || bit[0] > '9' {
+		if bit[i] < '0' || bit[i] > '9' {
 			err = errors.New("Parse Error 1")
 			return slice, err
 		}
@@ -197,6 +194,7 @@ func ParseLine(line string) (*Ps, error) {
 
 	if len(chunks) < 6 {
 		err = errors.New("Parse Error 7")
+		return nil, err
 	}
 
 	ret.min, err = workBit(chunks[0], "min")

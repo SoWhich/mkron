@@ -44,9 +44,12 @@ func (top *PsList) Remove(node *Ps) *Ps {
 	if node == nil {
 
 	} else if node == top.Head {
+
 		top.Head = top.Head.Next
+		node.Next = nil
 
 	} else {
+
 		var cur *Ps
 		for cur = top.Head; cur.Next == node; cur = cur.Next {
 			if cur.Next == nil {
@@ -69,9 +72,5 @@ func (top *PsList) Add(node *Ps) {
 }
 
 func (top *PsList) IsEmpty() bool {
-	if top.Head == nil {
-		return true
-	} else {
-		return false
-	}
+	return (top.Head == nil)
 }
