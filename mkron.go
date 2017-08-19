@@ -33,7 +33,8 @@ import (
 
 func main() {
 	ver := flag.Bool("v", false, "get version number/about information")
-	fname := flag.String("f", "/etc/crontab", "name crontab file location")
+	fname := flag.String("f", "/etc/crontab", "specify crontab file")
+	sname := flag.String("f", "/bin/sh", "specify shell")
 	flag.Parse()
 
 	if *ver {
@@ -95,7 +96,7 @@ func main() {
 
 		for !psStack.IsEmpty() {
 			cur := psStack.Remove(psStack.Head)
-			ps := exec.Command("sh", "-c", cur.Comm)
+			ps := exec.Command(*sname, "-c", cur.Comm)
 			err = ps.Start()
 			if err != nil {
 				log.Println(err)
