@@ -33,8 +33,8 @@ import (
 
 func main() {
 	ver := flag.Bool("v", false, "get version number/about information")
+	sname := flag.String("s", "/bin/sh", "specify shell")
 	fname := flag.String("f", "/etc/crontab", "specify crontab file")
-	sname := flag.String("f", "/bin/sh", "specify shell")
 	flag.Parse()
 
 	if *ver {
