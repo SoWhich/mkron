@@ -72,5 +72,5 @@ func (top *PsList) Add(node *Ps) {
 }
 
 func (top *PsList) IsEmpty() bool {
-	return (top.Head == nil)
+	return top.Head == nil
 }
