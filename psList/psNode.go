@@ -65,7 +65,7 @@ func isRight(time int, list []int) bool {
 }
 
 func (process Ps) IsTime(time time.Time) bool {
-	// Luckily enough, Go manages time in the exact way the crontab file
+	// Luckily enough, Go manages time in the exact way the crontab spec
 	// recommends. For convenience, they're listed below
 
 	// Minutes (0-59)
@@ -85,6 +85,7 @@ func (process Ps) Add(node *Ps) *Ps {
 	if node == nil {
 		return nil
 	}
+
 	node.Next = process.Next
 	process.Next = node
 	return node
@@ -121,7 +122,7 @@ func workBit(bit string, id string) ([]int, error) {
 	for i := 0; i < len(bit); i++ {
 
 		if bit[i] < '0' || bit[i] > '9' {
-			err = errors.New("Parse Error 1")
+			err = errors.New("Not a number where one should be")
 			return slice, err
 		}
 
@@ -143,7 +144,7 @@ func workBit(bit string, id string) ([]int, error) {
 			i++
 
 			if bit[i] < '0' || bit[i] > '9' {
-				err = errors.New("Parse Error 2")
+				err = errors.New("No number following -")
 				return slice, err
 			}
 
@@ -155,7 +156,7 @@ func workBit(bit string, id string) ([]int, error) {
 			}
 
 			if slice[len(slice)-1] >= temp {
-				err = errors.New("Parse Error 3")
+				err = errors.New("Range end less than start")
 				return slice, err
 			}
 
@@ -163,8 +164,9 @@ func workBit(bit string, id string) ([]int, error) {
 				slice = append(slice, x)
 			}
 		case ',':
+			//break
 		default:
-			err = errors.New("Parse Error 4")
+			err = errors.New("Invalid character")
 			return slice, err
 		}
 	}
